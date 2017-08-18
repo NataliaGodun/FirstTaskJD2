@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd">
+	
+
+	
+	<bean id="ConnectionPool" class="by.htp.library.dao.connection.ConnectionPool" init-method="init" destroy-method="close"></bean>
+	
+	<bean id="BookDAOImpl" class="by.htp.library.dao.impl.BookDAOImpl">
+	<constructor-arg ref="ConnectionPool"></constructor-arg></bean>
+	
+	
+	<bean id="UserDAOImpl" class="by.htp.library.dao.impl.UserDAOImpl">
+	<constructor-arg ref="ConnectionPool"></constructor-arg></bean>
+	
+	
+	<bean id="BookServiceImpl" class="by.htp.library.service.impl.BookServiceImpl">
+	<constructor-arg ref="BookDAOImpl"></constructor-arg></bean>
+	
+	<bean id="UserServiceImpl" class="by.htp.library.service.impl.UserServiceImpl">
+	<constructor-arg ref="UserDAOImpl"></constructor-arg></bean>
+	
+	<bean id="AddEditBook" class="by.htp.library.controller.command.impl.AddEditBook">
+	<constructor-arg ref="BookServiceImpl"></constructor-arg></bean>
+	
+	<bean id="AddNewBook" class="by.htp.library.controller.command.impl.AddNewBook">
+	<constructor-arg ref="BookServiceImpl"></constructor-arg></bean>
+	
+	<bean id="GetBookList" class="by.htp.library.controller.command.impl.GetBookList">
+	<constructor-arg ref="BookServiceImpl"></constructor-arg></bean>
+	
+	<bean id="SignIn" class="by.htp.library.controller.command.impl.SignIn">
+	<constructor-arg ref="UserServiceImpl"></constructor-arg></bean>
+	
+	<bean id="SignUp" class="by.htp.library.controller.command.impl.SignUp">
+	<constructor-arg ref="UserServiceImpl"></constructor-arg></bean>
+	
+	<bean id="WrongRequest" class="by.htp.library.controller.command.impl.WrongRequest">
+	</bean>
+	
+	<bean id="map" class="java.util.HashMap">
+		<constructor-arg>
+			<map key-type="by.htp.library.controller.command.CommandName"
+			value-type="by.htp.library.controller.command.Command">
+			
+			<entry key="ADD_NEW_BOOK" value-ref="AddNewBook"></entry>
+			<entry key="SIGN_IN" value-ref="SignIn"></entry>
+			<entry key="SIGN_UP" value-ref="SignUp"></entry>
+			<entry key="GET_BOOKLIST" value-ref="GetBookList"></entry>
+			<entry key="ADD_EDIT_BOOK" value-ref="AddEditBook"></entry>
+			<entry key="WRONG_REQUEST" value-ref="WrongRequest"></entry>
+			
+			</map>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="CommandProvider" class="by.htp.library.controller.command.CommandProvider">
+	<constructor-arg ref="map"></constructor-arg></bean>
+	
+	<bean id="Controller" class="by.htp.library.controller.Controller">
+	<constructor-arg ref="CommandProvider"></constructor-arg></bean>
+	
+	
+	
+	
+	
+</beans>
